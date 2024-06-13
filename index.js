@@ -39,21 +39,32 @@ async function solve(regn, DOB, schno, ccno) {
 }
 
 function parseHtml(htmlContent) {
-  const $ = cheerio.load(htmlContent);
-  const rollNo = $('td:contains("Roll No:")').next('td').text().trim() || "N/A";
-  const candidateName = $('td:contains("Candidate Name:")').next('td').text().trim() || "N/A";
-  const DateofBirth = $('td:contains("Date of Birth")').next('td').text().trim() || "N/A";
+    const $ = cheerio.load(htmlContent);
+    const rollNo = $('td:contains("Roll No:")').next('td').text().trim() || "N/A";
+    const candidateName = $('td:contains("Candidate Name:")').next('td').text().trim() || "N/A";
+    const DateofBirth = $('td:contains("Date of Birth")').next('td').text().trim() || "N/A";
+  
+    let totalMarks = 0;
 
-  if (rollNo === "N/A") {
-    return null;
+    let Marks1 = parseInt($('td:contains("ENGLISH COMM.")').next('td').next('td').next('td').text().trim()) || 0;
+    let Marks6 = parseInt($('td:contains("URDU COURSE-A")').next('td').next('td').next('td').text().trim()) || 0;
+    let Marks2= parseInt($('td:contains("MATHEMATICS")').next('td').next('td').next('td').text().trim()) || 0;
+    let Marks3= parseInt($('td:contains("086")').next('td').next('td').next('td').next('td').text().trim()) || 0;
+    let Marks4= parseInt($('td:contains("SOCIAL SCIENCE")').next('td').next('td').next('td').text().trim()) || 0;
+    let Marks5= parseInt($('td:contains("HINDI COURSE-A")').next('td').next('td').next('td').text().trim()) || 0;
+    totalMarks=Marks1+Marks2+Marks3+Marks4+Marks5+Marks6;
+    if (rollNo === "N/A") {
+      return null;
+    }
+    console.log({Marks1, Marks2, Marks3, Marks4,Marks5});
+    return { rollNo, candidateName, DateofBirth, totalMarks,  };
   }
-  return { rollNo, candidateName, DateofBirth };
-}
+  
 
 async function main(){
-  for(let roll=7264148; roll<=7264157; roll++){
+  for(let roll=7264158; roll<=7264180; roll++){
     let solved=false;
-    for(let year=2001; year<=2003; year++ ){
+    for(let year=2003; year>=2001; year-- ){
         if(solved){
             break;
         }
@@ -62,7 +73,6 @@ async function main(){
             break;
         }
         const dataPromises=[];
-        console.log("processing for month: ", month);
         for(let day=1; day<=31; day++ ){
           // Pad day and month with leading zeros if less than 10
           let paddedDay = day.toString().padStart(2, '0');
